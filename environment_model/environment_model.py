@@ -7,6 +7,7 @@ from tf2_geometry_msgs import do_transform_point
 from geometry_msgs.msg import PointStamped
 from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
+from sklearn.cluster import DBSCAN
 import numpy as np
 
 # import required standard and custom data types
@@ -16,10 +17,12 @@ from vision_msgs.msg import Detection2DArray
 from custom_msgs.msg import DetectedObject, DetectedObjectsPositionArray
 from geometry_msgs.msg import TransformStamped
 
+# measured from "base_link" to new "v2x_frame"
 TRANSLATION_X = 0.65
 TRANSLATION_Y = 0.0
 TRANSLATION_Z = -0.07
 
+# extracted values from ros2 topic of realsense camera
 F_X= 607.3187866210938
 F_Y = 607.1571044921875
 C_X = 320.80078125
@@ -31,8 +34,8 @@ class EnvironmentModel(Node):
         super().__init__('environment_model')
         # create subscribers to /detectnet/detections, /odom and /camera/camera/aligned_depth_to_color/image_raw topics from Object Detection, Localization and Camera
         self.subscription = self.create_subscription(Detection2DArray, '/detectnet/detections', self.detections_callback, 10)
-        # self.subscription = self.create_subscription(Image, '/camera/camera/aligned_depth_to_color/image_raw', self.depth_callback, 10)
-        self.subscription = self.create_subscription(Image, '/camera/camera/depth/image_rect_raw', self.depth_callback, 10)
+        self.subscription = self.create_subscription(Image, '/camera/camera/aligned_depth_to_color/image_raw', self.depth_callback, 10)
+        # self.subscription = self.create_subscription(Image, '/camera/camera/depth/image_rect_raw', self.depth_callback, 10)
         self.subscription = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
         
         # create publisher to publish detected object position
@@ -78,33 +81,53 @@ class EnvironmentModel(Node):
         
         # extract step and depth image from depth topic
         step = data.step
-        depth = data.data
+        depth_image = np.frombuffer(data.data, dtype=np.uint16).reshape((data.height, data.width))
         
         self.id = 0
         dop = DetectedObjectsPositionArray()
         
         
         for i in range(len(self.bbox)):
+            # calculate the top left and right bottom coordinates of the boundary box for each object
+            bbox_cx, bbox_cy, bbox_size_x, bbox_size_y= self.bbox[i][0], self.bbox[i][1], self.bbox[i][2], self.bbox[i][3]
+            x_min = max(0, int(bbox_cx - bbox_size_x / 2))
+            x_max = min(data.width, int(bbox_cx + bbox_size_x / 2))
+            y_min = max(0, int(bbox_cy - bbox_size_y / 2))
+            y_max = min(data.height, int(bbox_cy + bbox_size_y / 2))
+
+            # extract the depth values in the bounding box window and find the valid depth values (0.1 - 10m)
+            depth_window = depth_image[y_min:y_max, x_min:x_max] / 1000.0  #convert to meters
+            self.valid_depths = depth_window[(depth_window > 0.1) & (depth_window < 10.0)] 
             
-            bbox_cx, bbox_cy = self.bbox[i][0], self.bbox[i][1]
+            # skip the detected object is there are no valid depth values
+            if len(self.valid_depths) == 0:
+                continue
             
-            # compute index
-            index = int(bbox_cy)* step + int(bbox_cx)* 2  # 2 bytes per pixel (16UC1)
-            # extract depth value for the index 
-            depth_val = (depth[index] + (depth[index + 1] << 8)) / 1000 # combine bytes (little-endian)
+            # cluster the depth values using DBSCAN algorithm (eps=0.1, min_samples=30)
+            depth_vals = self.valid_depths.reshape(-1, 1)
+            clustering = DBSCAN(eps=0.1, min_samples=30).fit(depth_vals)
+            self.labels = clustering.labels_
+
+            # choose the largest cluster and find the depth
+            if len(set(self.labels)) > 1:
+                largest_cluster = np.argmax(np.bincount(self.labels[self.labels >= 0]))
+                cluster_depths = depth_vals[self.labels == largest_cluster]
+                self.dominant_depth = np.median(cluster_depths)
+            else:
+                self.dominant_depth = np.median(self.valid_depths)
              
             # calculate the coordinates in camera depth optical frame using depth 
-            X = depth_val * (self.bbox[i][0] - C_X) / F_X
-            Y = depth_val * (self.bbox[i][1] - C_Y) / F_Y
-            Z = depth_val
+            self.X = self.dominant_depth * (self.bbox[i][0] - C_X) / F_X
+            self.Y = self.dominant_depth * (self.bbox[i][1] - C_Y) / F_Y
+            self.Z = self.dominant_depth
 
             #create point in camera depth optical frame
             point_in_source = PointStamped()
             point_in_source.header.stamp = self.get_clock().now().to_msg()
             point_in_source.header.frame_id = 'camera_depth_optical_frame'  # example source frame
-            point_in_source.point.x = X
-            point_in_source.point.y = Y
-            point_in_source.point.z = Z
+            point_in_source.point.x = self.X
+            point_in_source.point.y = self.Y
+            point_in_source.point.z = self.Z
 
             try:
                 # lookup the transform from 'camera_depth_optical_frame' to 'v2x_frame'
@@ -125,7 +148,7 @@ class EnvironmentModel(Node):
                 dop.array.append(do)
                 
                 self.get_logger().info(
-                    f"Distance: {dominant_depth}: "
+                    f"Distance: {self.dominant_depth}: "
                     f"Point in {point_in_source.header.frame_id}: "
                     f"({point_in_source.point.x:.2f}, {point_in_source.point.y:.2f}) -->  "
                     f"Point in {point_in_target.header.frame_id}: "
