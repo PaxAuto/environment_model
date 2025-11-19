@@ -161,7 +161,7 @@ cd src
 ```
 2. Clone component repository
 ```bash
-git clone https://git.hs-coburg.de/pax_auto/obstacle_detection.git
+git clone https://git.hs-coburg.de/pax_auto/environment_model.git
 ```
 3. Clone additional repositories
 ```bash
@@ -190,8 +190,13 @@ ros2 launch environment_model environment_model_launch.py
 
 ## 🧪 Testing
 Component testing (test script and results are stored in test folder)
+1. Statement coverage
 ```bash
-pytest src/environemt_model/test/ --cov=environemt_model --cov-report=html --cov-report=term-missing
+pytest src/environment_model/test/ --cov=environment_model.environment_model --cov-report=html:html_statement --cov-report=term-missing
+```
+2. Branch coverage
+```bash
+pytest src/environment_model/test/ --cov=environment_model.environment_model --cov-report=html:branch_coverage --cov-report=term-missing --cov-branch
 ```
 
 ## 🧑‍💻 Contributor

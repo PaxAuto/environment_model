@@ -50,12 +50,12 @@
         </form>
         <h2>
                 <a class="button" href="index.html">Files</a>
-                <a class="button" href="function_index.html">Functions</a>
-                <a class="button current">Classes</a>
+                <a class="button current">Functions</a>
+                <a class="button" href="class_index.html">Classes</a>
         </h2>
         <p class="text">
             <a class="nav" href="https://coverage.readthedocs.io/en/7.11.0">coverage.py v7.11.0</a>,
-            created at 2025-11-09 02:30 +0100
+            created at 2025-11-19 13:11 +0100
         </p>
     </div>
 </header>
@@ -64,7 +64,7 @@
         <thead>
             <tr class="tablehead" title="Click to sort">
                 <th id="file" class="name left" aria-sort="none" data-shortcut="f">File<span class="arrows"></span></th>
-                <th id="region" class="name left" aria-sort="none" data-default-sort-order="ascending" data-shortcut="n">class<span class="arrows"></span></th>
+                <th id="region" class="name left" aria-sort="none" data-default-sort-order="ascending" data-shortcut="n">function<span class="arrows"></span></th>
                 <th id="statements" aria-sort="none" data-default-sort-order="descending" data-shortcut="s">statements<span class="arrows"></span></th>
                 <th id="missing" aria-sort="none" data-default-sort-order="descending" data-shortcut="m">missing<span class="arrows"></span></th>
                 <th id="excluded" aria-sort="none" data-default-sort-order="descending" data-shortcut="x">excluded<span class="arrows"></span></th>
@@ -74,27 +74,67 @@
         <tbody>
             <tr class="region">
                 <td class="name left"><a href="z_6d7f2dd256f9f408___init___py.html">install/environment_model/lib/python3.10/site-packages/environment_model/__init__.py</a></td>
-                <td class="name left"><a href="z_6d7f2dd256f9f408___init___py.html"><data value=''><span class='no-noun'>(no class)</span></data></a></td>
+                <td class="name left"><a href="z_6d7f2dd256f9f408___init___py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
                 <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="0 0">100%</td>
             </tr>
             <tr class="region">
-                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t29">install/environment_model/lib/python3.10/site-packages/environment_model/environment_model.py</a></td>
-                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t29"><data value='EnvironmentModel'>EnvironmentModel</data></a></td>
-                <td>88</td>
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t33">install/environment_model/lib/python3.10/site-packages/environment_model/environment_model.py</a></td>
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t33"><data value='init__'>EnvironmentModel.__init__</data></a></td>
+                <td>15</td>
                 <td>0</td>
                 <td>0</td>
-                <td class="right" data-ratio="88 88">100%</td>
+                <td class="right" data-ratio="15 15">100%</td>
+            </tr>
+            <tr class="region">
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t64">install/environment_model/lib/python3.10/site-packages/environment_model/environment_model.py</a></td>
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t64"><data value='detections_callback'>EnvironmentModel.detections_callback</data></a></td>
+                <td>8</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="8 8">100%</td>
+            </tr>
+            <tr class="region">
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t76">install/environment_model/lib/python3.10/site-packages/environment_model/environment_model.py</a></td>
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t76"><data value='depth_callback'>EnvironmentModel.depth_callback</data></a></td>
+                <td>50</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="50 50">100%</td>
+            </tr>
+            <tr class="region">
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t169">install/environment_model/lib/python3.10/site-packages/environment_model/environment_model.py</a></td>
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t169"><data value='broadcast_frame'>EnvironmentModel.broadcast_frame</data></a></td>
+                <td>13</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="13 13">100%</td>
+            </tr>
+            <tr class="region">
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t190">install/environment_model/lib/python3.10/site-packages/environment_model/environment_model.py</a></td>
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t190"><data value='odom_callback'>EnvironmentModel.odom_callback</data></a></td>
+                <td>2</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="2 2">100%</td>
+            </tr>
+            <tr class="region">
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t197">install/environment_model/lib/python3.10/site-packages/environment_model/environment_model.py</a></td>
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html#t197"><data value='main'>main</data></a></td>
+                <td>5</td>
+                <td>0</td>
+                <td>0</td>
+                <td class="right" data-ratio="5 5">100%</td>
             </tr>
             <tr class="region">
                 <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html">install/environment_model/lib/python3.10/site-packages/environment_model/environment_model.py</a></td>
-                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html"><data value=''><span class='no-noun'>(no class)</span></data></a></td>
-                <td>36</td>
+                <td class="name left"><a href="z_6d7f2dd256f9f408_environment_model_py.html"><data value=''><span class='no-noun'>(no function)</span></data></a></td>
+                <td>31</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="35 36">97%</td>
+                <td class="right" data-ratio="30 31">97%</td>
             </tr>
         </tbody>
         <tfoot>
@@ -116,7 +156,7 @@
     <div class="content">
         <p>
             <a class="nav" href="https://coverage.readthedocs.io/en/7.11.0">coverage.py v7.11.0</a>,
-            created at 2025-11-09 02:30 +0100
+            created at 2025-11-19 13:11 +0100
         </p>
     </div>
     <aside class="hidden">
