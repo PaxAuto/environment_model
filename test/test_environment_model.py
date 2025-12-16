@@ -21,7 +21,7 @@ def node():
     rclpy.shutdown()       # Cleanly shutdown ROS
 
 
-# TC_OD001
+# TC_EM001
 def test_detections_callback_with_detections(node):
     # Test Step 1 ----------------------------------------------------------------------
     msg = Detection2DArray()
@@ -55,7 +55,7 @@ def test_detections_callback_with_detections(node):
     
 
 
-# TC_OD002
+# TC_EM002
 def test_odom_callback_sets_yaw(node):
     msg = Odometry()
     msg.pose.pose.orientation.x = 0.0
@@ -66,7 +66,7 @@ def test_odom_callback_sets_yaw(node):
     assert pytest.approx(node.yaw, rel=1e-3) == np.pi/2
 
 
-# TC_OD003
+# TC_EM003
 def test_broadcast_frame_publishes_tf(node):
     # Test Step 1 ----------------------------------------------------------------------
     node.br.sendTransform = MagicMock()
@@ -90,7 +90,7 @@ def test_broadcast_frame_publishes_tf(node):
     assert yaw == pytest.approx(-node.yaw, abs=1e-3)
 
 
-# TC_OD004
+# TC_EM004
 @patch("environment_model.environment_model.do_transform_point")
 def test_depth_callback_1(mock_do_transform, node):
     # Test Step 1 ----------------------------------------------------------------------
@@ -132,7 +132,7 @@ def test_depth_callback_1(mock_do_transform, node):
     assert len(node.valid_depths) == 0
 
     
-# TC_OD005
+# TC_EM005
 @patch("environment_model.environment_model.do_transform_point")
 def test_depth_callback_2(mock_do_transform, node):
     # Test Step 1 ----------------------------------------------------------------------
